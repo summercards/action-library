@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>动作库 · 本地预览</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "/vendor/three/three.module.js",
+    "three/addons/": "/vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">动作库 <span id="totalBadge" class="badge">--</span></div>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="搜索动作名 / 编号 / 来源（回车或停顿即搜）" autocomplete="off">
+  </div>
+  <div class="top-actions">
+    <button id="uploadBtn" class="primary" title="上传动作文件（glb / gltf / fbx / bvh）">⬆ 上传</button>
+    <input id="fileInput" type="file" multiple accept=".glb,.gltf,.fbx,.bvh" hidden>
+    <a class="ghost" href="/rig.html" title="把动作套到自己的角色上" style="text-decoration:none;display:inline-flex;align-items:center">🎬 套动作</a>
+    <button id="favFilter" class="ghost">☆ 只看收藏</button>
+    <button id="reindexBtn" class="ghost" title="重新扫描 02_动作数据/">↻ 重新索引</button>
+  </div>
+</header>
+
+<main>
+  <aside class="sidebar">
+    <section>
+      <h3>来源 <span class="hint">点击筛选</span></h3>
+      <ul id="sourceList" class="filter-list"><li class="muted">加载中…</li></ul>
+    </section>
+    <section>
+      <h3>标签 <span class="hint">点击筛选</span></h3>
+      <ul id="tagList" class="filter-list"><li class="muted">加载中…</li></ul>
+    </section>
+  </aside>
+
+  <section class="center">
+    <div id="activeFilters" class="active-filters"></div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>没有匹配的动作</div>
+  </section>
+
+  <aside class="viewer-panel">
+    <div id="viewport">
+      <canvas id="cv"></canvas>
+      <div id="hud" class="hud">点左侧卡片预览</div>
+      <div id="loading" class="loading" hidden><span class="spinner"></span> 加载中…</div>
+    </div>
+    <div class="controls">
+      <button id="playBtn" class="play" title="播放 / 暂停">▶</button>
+      <input id="scrub" type="range" min="0" max="1000" value="0" step="1" title="时间轴">
+      <span id="timeLabel" class="mono">0.00 / 0.00 s</span>
+      <button id="loopBtn" class="toggle on" title="循环播放">循环</button>
+      <select id="speed" title="播放速度">
+        <option value="0.25">0.25×</option>
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+      </select>
+    </div>
+    <div id="meta" class="meta"></div>
+  </aside>
+</main>
+
+<div id="tagModal" class="modal" hidden>
+  <div class="modal-box">
+    <div class="modal-head">
+      <strong id="tagModalTitle">标签</strong>
+      <button id="tagModalClose" class="ghost">✕</button>
+    </div>
+    <div id="tagModalBody" class="modal-body"></div>
+    <div class="modal-foot">
+      <input id="newTagInput" placeholder="新建标签，回车添加">
+      <button id="newTagBtn">添加</button>
+    </div>
+  </div>
+</div>
+
+<div id="dropHint" class="drop-hint" hidden><div>松手就上传<br><span>glb / gltf / fbx / bvh</span></div></div>
+
+<div id="uploadPanel" class="upload-panel" hidden>
+  <div class="upload-head">
+    <strong>上传任务</strong>
+    <button id="uploadClose" class="ghost" title="收起">✕</button>
+  </div>
+  <div id="uploadList" class="upload-list"></div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

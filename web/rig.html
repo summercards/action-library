@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>套动作 · 动作库</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%A4%BA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#14161a; --panel:#1b1e24; --panel2:#22262e; --line:#2c313a;
+  --fg:#e6e9ef; --dim:#9aa3b0; --accent:#4c8dff; --ok:#37c98b; --warn:#f0a13a; --bad:#ef5f5f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+a{color:var(--accent);text-decoration:none}
+header{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+header .brand{font-weight:700;font-size:16px}
+header .tip{color:var(--dim);font-size:12px}
+main{display:grid;grid-template-columns:300px 1fr 380px;gap:14px;padding:14px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card h3{margin:0 0 10px;font-size:13px;color:var(--dim);font-weight:600;letter-spacing:.5px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);padding:7px 12px}
+button:hover{border-color:#3d4552}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:disabled{opacity:.45;cursor:not-allowed}
+button.ghost{background:transparent}
+#drop{border:1.5px dashed #38404d;border-radius:10px;padding:18px 12px;text-align:center;color:var(--dim);cursor:pointer;transition:.15s}
+#drop.hot{border-color:var(--accent);background:#1d2534;color:var(--fg)}
+#drop b{color:var(--fg);display:block;margin-bottom:4px}
+.mlist{margin-top:10px;max-height:220px;overflow:auto}
+.mitem{display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.mitem:hover{background:var(--panel2)}
+.mitem.on{border-color:var(--accent);background:#1d2534}
+.mitem .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mitem .sub{color:var(--dim);font-size:11.5px;white-space:nowrap}
+.searchbar{display:flex;gap:8px;margin-bottom:10px}
+.searchbar input{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:8px 10px;font:inherit}
+.alist{max-height:calc(100vh - 260px);overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.aitem{padding:8px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--panel2)}
+.aitem:hover{border-color:#3d4552}
+.aitem.on{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok) inset}
+.aitem .nm{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aitem .sub{color:var(--dim);font-size:11px;margin-top:2px}
+.badge{display:inline-block;padding:1px 6px;border-radius:5px;background:#2a303a;color:var(--dim);font-size:11px;margin-right:4px}
+.badge.mx{background:#3a2f4a;color:#c9a9f0}
+.progress{height:8px;background:#262b33;border-radius:5px;overflow:hidden;margin:8px 0}
+.progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.vid{width:100%;border-radius:10px;background:#000;display:block}
+.hint{color:var(--dim);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.jobs{margin-top:10px;max-height:280px;overflow:auto;font-size:12.5px}
+.job{display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-bottom:1px solid #232830;cursor:pointer}
+.job:hover{background:#20242b}
+.st{font-size:11px;padding:1px 6px;border-radius:5px}
+.st.done{background:#14372a;color:var(--ok)}
+.st.running{background:#1c2a44;color:#7fb0ff}
+.st.failed{background:#3a1c1c;color:var(--bad)}
+.empty{color:var(--dim);padding:20px;text-align:center}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#2a303a;color:#fff;padding:9px 16px;border-radius:8px;border:1px solid var(--line);opacity:0;pointer-events:none;transition:.2s;z-index:99}
+#toast.on{opacity:1}
+@media (max-width:1200px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">🎬 套动作工作室</span>
+  <span class="tip">把动作库里的动作套到你自己的角色上，先看效果，再下载带动画的 GLB</span>
+  <span style="flex:1"></span>
+  <a href="/">← 回动作库</a>
+</header>
+
+<main>
+  <!-- 左：模型 -->
+  <section class="card">
+    <h3>① 你的角色</h3>
+    <div id="drop">
+      <b>点这里选模型</b>
+      或把文件拖进来<br>
+      <span class="hint">.fbx / .glb / .gltf（要已经蒙皮绑骨）<br>
+      有贴图的，把模型和贴图一起压成 .zip 传，颜色才不会丢</span>
+    </div>
+    <input id="file" type="file" accept=".fbx,.glb,.gltf,.zip" hidden>
+    <div id="mlist" class="mlist"></div>
+  </section>
+
+  <!-- 中：动作 -->
+  <section class="card">
+    <h3>② 选一条动作</h3>
+    <div class="searchbar">
+      <input id="q" placeholder="搜动作名，例如 walk / run / idle / 143_01">
+      <button id="qbtn" class="ghost">搜索</button>
+    </div>
+    <div id="acount" class="hint" style="margin-bottom:8px"></div>
+    <div id="alist" class="alist"></div>
+  </section>
+
+  <!-- 右：运行与结果 -->
+  <section class="card">
+    <h3>③ 套上去看看</h3>
+    <div id="pick" class="hint" style="margin-bottom:8px">还没选模型和动作</div>
+    <button id="run" class="primary" style="width:100%" disabled>套上试试</button>
+    <div class="progress"><i id="bar"></i></div>
+    <div id="msg" class="hint"></div>
+    <div id="result" style="margin-top:12px"></div>
+    <h3 style="margin-top:16px">最近套过的</h3>
+    <div id="jobs" class="jobs"></div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+let model = null, anim = null, job = null, timer = null;
+
+function toast(t, ms = 2600) {
+  const el = $('#toast');
+  el.textContent = t; el.classList.add('on');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('on'), ms);
+}
+function human(n) {
+  if (n == null) return '—';
+  if (n >= 1048576) return (n / 1048576).toFixed(1) + ' MB';
+  if (n >= 1024) return (n / 1024).toFixed(0) + ' KB';
+  return n + ' B';
+}
+async function api(url, opt) {
+  const r = await fetch(url, opt);
+  const d = await r.json().catch(() => ({ error: '服务器返回了看不懂的东西' }));
+  if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+  return d;
+}
+function refreshPick() {
+  const parts = [];
+  if (model) parts.push('角色：' + model.name + (model.bones ? `（${model.bones} 根骨骼）` : ''));
+  if (anim) parts.push('动作：' + anim.name);
+  $('#pick').textContent = parts.length ? parts.join('　+　') : '还没选模型和动作';
+  $('#run').disabled = !(model && anim) || !!timer;
+}
+
+/* ---------- 模型 ---------- */
+async function loadModels() {
+  const d = await api('/api/rig/models');
+  const box = $('#mlist');
+  if (!d.items.length) { box.innerHTML = '<div class="hint" style="margin-top:8px">还没传过模型</div>'; return; }
+  box.innerHTML = d.items.map(m => `
+    <div class="mitem ${model && model.id === m.id ? 'on' : ''}" data-id="${m.id}">
+      <span class="nm">${m.name}</span>
+      <span class="sub">${m.bones ? m.bones + ' 骨' : '未检测'}${m.textures ? ' · 贴图 ' + m.textures : ''} · ${human(m.size)}</span>
+    </div>`).join('');
+  box.querySelectorAll('.mitem').forEach(el => el.onclick = () => {
+    model = d.items.find(x => x.id === el.dataset.id);
+    loadModels(); refreshPick();
+  });
+}
+
+async function uploadModel(file) {
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file, file.name);
+  $('#msg').textContent = '正在上传并检查骨架…';
+  try {
+    const d = await api('/api/rig/models', { method: 'POST', body: fd });
+    model = d.model;
+    toast(model.bones ? `模型读到了，${model.bones} 根骨骼` : '模型已上传');
+    $('#msg').textContent = '';
+    await loadModels(); refreshPick();
+  } catch (e) {
+    $('#msg').textContent = '';
+    toast(e.message, 5000);
+  }
+}
+
+$('#drop').onclick = () => $('#file').click();
+$('#file').onchange = e => uploadModel(e.target.files[0]);
+['dragenter', 'dragover'].forEach(t => $('#drop').addEventListener(t, e => {
+  e.preventDefault(); $('#drop').classList.add('hot');
+}));
+['dragleave', 'drop'].forEach(t => $('#drop').addEventListener(t, e => {
+  e.preventDefault(); $('#drop').classList.remove('hot');
+}));
+$('#drop').addEventListener('drop', e => uploadModel(e.dataTransfer.files[0]));
+
+/* ---------- 动作 ---------- */
+async function loadAnims() {
+  const q = $('#q').value.trim();
+  const d = await api('/api/rig/animations?q=' + encodeURIComponent(q));
+  $('#acount').textContent = `共 ${d.total} 条${d.total > d.items.length ? `，先显示前 ${d.items.length} 条` : ''}${q ? '' : '（Mixamo 动作在未搜索时按名字排在前面，可直接搜）'}`;
+  const box = $('#alist');
+  if (!d.items.length) { box.innerHTML = '<div class="empty">没有匹配的动作</div>'; return; }
+  box.innerHTML = d.items.map(a => `
+    <div class="aitem ${anim && anim.id === a.id ? 'on' : ''}" data-id="${a.id}">
+      <div class="nm">${a.name}</div>
+      <div class="sub"><span class="badge ${a.source === 'Mixamo' ? 'mx' : ''}">${a.source}</span>${a.format}${a.duration ? ' · ' + a.duration + 's' : ''}</div>
+    </div>`).join('');
+  box.querySelectorAll('.aitem').forEach(el => el.onclick = () => {
+    anim = d.items.find(x => x.id === el.dataset.id);
+    loadAnims(); refreshPick();
+  });
+}
+$('#qbtn').onclick = loadAnims;
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') loadAnims(); });
+let qt = null;
+$('#q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(loadAnims, 400); });
+
+/* ---------- 运行 ---------- */
+$('#run').onclick = async () => {
+  if (!model || !anim) return;
+  $('#run').disabled = true;
+  $('#result').innerHTML = '';
+  $('#bar').style.width = '2%';
+  $('#msg').textContent = '正在启动…';
+  try {
+    const d = await api('/api/rig/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: model.id, anim: anim.id })
+    });
+    job = d.job;
+    poll();
+  } catch (e) {
+    $('#msg').textContent = '';
+    toast(e.message, 5000);
+    refreshPick();
+  }
+};
+
+async function poll() {
+  clearTimeout(timer);
+  timer = setInterval(async () => {
+    try {
+      const d = await api('/api/rig/jobs');
+      const cur = d.items.find(x => x.id === job.id);
+      if (!cur) return;
+      const p = Math.max(2, cur.progress || 0);
+      $('#bar').style.width = p + '%';
+      $('#msg').textContent = (cur.message || '处理中') + (cur.state === 'running' ? `（${p}%）` : '');
+      if (cur.state === 'done') {
+        clearInterval(timer); timer = null;
+        renderResult(cur); loadJobs(); refreshPick();
+      } else if (cur.state === 'failed') {
+        clearInterval(timer); timer = null;
+        $('#msg').textContent = cur.message || '失败了';
+        toast(cur.message || '套动作失败', 5000);
+        loadJobs(); refreshPick();
+      }
+    } catch (e) { /* 网络抖动时忽略，下一轮再试 */ }
+  }, 1500);
+}
+
+function renderResult(j) {
+  $('#msg').textContent = j.matched ? `完成，${j.matched} 根骨骼对上了` : '完成';
+  $('#bar').style.width = '100%';
+  const q = `id=${encodeURIComponent(j.id)}`;
+  $('#result').innerHTML = `
+    ${j.has_video ? `<video class="vid" src="/api/rig/file?${q}&what=mp4" autoplay loop muted playsinline></video>` : ''}
+    <div class="row" style="margin-top:10px">
+      ${j.has_glb ? `<a class="primary" style="padding:7px 12px;border-radius:8px" href="/api/rig/file?${q}&what=glb&dl=1">⬇ 下载带动画的 GLB</a>` : ''}
+      <button class="ghost" onclick="window.open('/api/rig/file?${q}&what=glb','_blank')">在浏览器里打开</button>
+    </div>`;
+}
+
+/* ---------- 历史 ---------- */
+async function loadJobs() {
+  try {
+    const d = await api('/api/rig/jobs');
+    const box = $('#jobs');
+    if (!d.items.length) { box.innerHTML = '<div class="hint">还没有记录</div>'; return; }
+    box.innerHTML = d.items.map(j => `
+      <div class="job" data-id="${j.id}">
+        <span>${(j.anim_name || '').slice(0, 22)}</span>
+        <span class="st ${j.state}">${j.state === 'done' ? '完成' : j.state === 'running' ? '进行中' : '失败'}</span>
+      </div>`).join('');
+    box.querySelectorAll('.job').forEach(el => el.onclick = async () => {
+      const d2 = await api('/api/rig/jobs');
+      const j = d2.items.find(x => x.id === el.dataset.id);
+      if (j && j.state === 'done') { job = j; renderResult(j); }
+      else if (j) toast(j.message || '这条还没跑完');
+    });
+  } catch (e) { /* 忽略 */ }
+}
+
+loadModels(); loadAnims(); loadJobs(); refreshPick();
+</script>
+</body>
+</html>

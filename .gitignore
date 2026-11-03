@@ -1,0 +1,26 @@
+# 运行产物
+web/logs/
+web/cache/
+web/server.pid
+__pycache__/
+*.pyc
+
+# 备份与临时
+*.bak
+*.bak_*
+*.tgz
+*.zip
+.DS_Store
+
+# 素材本体不入库（体积大、许可各异）
+*.glb
+*.gltf
+*.fbx
+*.bvh
+*.blend
+!web/vendor/**/*.js
+
+# 缩略图与截图
+thumb_*.jpg
+*.png
+*.mp4
