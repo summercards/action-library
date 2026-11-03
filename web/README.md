@@ -10,11 +10,12 @@ Three.js，不走 CDN，断网也能用。
 ```bash
 cd ~/动作库/90_网页系统
 ./start.sh                 # 后台启动，默认 8099
-open http://100.117.192.4:8099/     # 或在浏览器打开
+open http://127.0.0.1:8099/         # 或在浏览器打开
 ./stop.sh                  # 停止
 ```
 
 - 端口可用环境变量改：`ACLIB_PORT=8100 ./start.sh`
+- 库根目录默认 `~/动作库`，可用 `ACLIB_HOME` 覆盖
 - 进程号写在 `server.pid`，日志在 `logs/server.log`
 - 启动脚本会先检查端口占用，起完轮询 `/api/health` 确认真的活了
 

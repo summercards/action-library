@@ -9,7 +9,9 @@ import subprocess
 import sys
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB = "/home/sc/动作库/00_说明与索引/library.db"
+# 库根目录：默认 ~/动作库，可用环境变量 ACLIB_HOME 覆盖
+LIB_HOME = os.environ.get("ACLIB_HOME", os.path.expanduser("~/动作库"))
+DB = os.path.join(LIB_HOME, "00_说明与索引", "library.db")
 THUMB_DIR = os.path.join(BASE, "cache", "thumbs")
 RENDER = os.path.join(BASE, "tools", "thumb_render.py")
 BLENDER = "blender"
