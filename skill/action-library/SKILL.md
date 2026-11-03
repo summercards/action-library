@@ -14,6 +14,49 @@ description: 建立并维护一个本地 3D 动作素材库（mocap / 动画包 
 - 要搭或修一个本地动作预览站
 - 要把自己角色的模型套上库里的动作，导出带动画的 GLB
 
+## 安装与获取
+
+仓库地址：`https://github.com/summercards/action-library`
+
+### 方式一：只取技能
+
+```bash
+git clone --depth 1 https://github.com/summercards/action-library.git /tmp/action-library
+cp -R /tmp/action-library/skill/action-library ~/.openclaw/workspace/skills/
+```
+
+也可以只下载单个文件：
+
+```bash
+curl -fsSL -o SKILL.md \
+  https://raw.githubusercontent.com/summercards/action-library/main/skill/action-library/SKILL.md
+```
+
+### 方式二：连预览站一起
+
+```bash
+git clone https://github.com/summercards/action-library.git
+cd action-library/web
+python3 server.py          # 打开 http://127.0.0.1:8099
+```
+
+依赖只有三样：Python 3（标准库足够）、Blender（渲缩略图与套动作时用）、浏览器。前端 three.js 已随仓库提供，不联网也能跑。
+
+### 更新
+
+```bash
+cd /tmp/action-library && git pull
+cp -R skill/action-library ~/.openclaw/workspace/skills/
+```
+
+### 目录约定
+
+预览站默认把动作库读作 `~/动作库`，放在别处时用环境变量指定：
+
+```bash
+ACLIB_HOME=/data/动作库 ACLIB_PORT=8100 python3 server.py
+```
+
 ## 铁律（先记住这几条，能省掉大部分返工）
 
 1. **原始下载包永不改名、永不修改、永不删除**。它是唯一能回滚的底。
@@ -47,6 +90,23 @@ description: 建立并维护一个本地 3D 动作素材库（mocap / 动画包 
 | 要登录 / 要付费 / 要填邮箱换链接 | 跳过，记下原因 |
 | 授权 CC0 / CC-BY / 公有领域 | 优先 |
 | 仅研究用途 | 只进 `02_动作数据` |
+
+### 素材源总表（实测地址，直接抄）
+
+| 来源 | 地址 | 授权 | 实测状态 |
+|---|---|---|---|
+| CMU MoCap | `http://mocap.cs.cmu.edu/` | 免费科研/教学 | ✅ 2535 段 BVH 已入库 |
+| SFU Mocap | `https://mocap.cs.sfu.ca/` | 免费科研，商用需问 | ✅ 44 段 BVH |
+| LAFAN1 | `https://github.com/ubisoft/ubisoft-laforge-animation-dataset` | 研究用途，商用前查 `license.txt` | ✅ 77 段 BVH，统一骨架 |
+| Quaternius 官方 | `https://quaternius.com/`<br>`https://quaternius.com/packs/ultimateanimatedanimals.html` | CC0 1.0 | ⚠️ 官网走 Google 网盘，直链拿不到 |
+| Quaternius 镜像（**用这个**） | `https://quaternius.trebeljahr.com/animals_pack`<br>`https://quaternius.trebeljahr.com/dinosaurs_pack`<br>`https://quaternius.trebeljahr.com/easy_enemies_pack`<br>`https://quaternius.trebeljahr.com/fish_pack` | CC0 1.0 | ✅ 214 条带动画 glb，直链可取 |
+| Khronos glTF 样例 | `https://github.com/KhronosGroup/glTF-Sample-Assets`<br>单件：`/tree/main/Models/Fox`、`/tree/main/Models/CesiumMan` | 多为 CC-BY 4.0，逐件看 | ✅ Fox / CesiumMan 可商用须署名 |
+| three.js 示例 | `https://github.com/mrdoob/three.js/tree/dev/examples/models/gltf` | MIT | ✅ 马/火烈鸟/鹳/鹦鹉，**形变动画无骨骼** |
+| Mixamo | `https://www.mixamo.com/` | Adobe 账号条款 | ⚠️ 需登录，已下 589 个 fbx |
+| Kenney | `https://kenney.nl/assets` | CC0 | ⚠️ 下载按钮要人工点，脚本抓不到 |
+| Bandai Namco 动作数据集 | `https://github.com/BandaiNamcoResearchInc/Bandai-Namco-Research-Motiondataset` | 研究用途 | ⚠️ 约 300 MB，下载中 |
+
+**已确认跳过**：Sketchfab、TurboSquid、CGTrader、Poly Pizza（要 key）——都要登录或付费，无人值守时进不去。
 
 ### 已验证可用的下载通道
 

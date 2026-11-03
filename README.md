@@ -62,6 +62,10 @@ python3 server.py            # http://127.0.0.1:8099
 ## 快速开始
 
 ```bash
+# 0. 取仓库
+git clone https://github.com/summercards/action-library.git
+cd action-library
+
 # 1. 起服务
 cd web && python3 server.py
 
@@ -72,13 +76,18 @@ open http://127.0.0.1:8099
 curl -X POST http://127.0.0.1:8099/api/reindex
 ```
 
-路径默认写死在 `server.py` 顶部（`/home/<user>/动作库`），换机器改那几行即可。
+库根目录默认 `~/动作库`，放在别处用环境变量指定，不用改代码：
+
+```bash
+ACLIB_HOME=/data/动作库 ACLIB_PORT=8100 python3 server.py
+```
 
 ## 技能怎么用
 
 `skill/action-library/SKILL.md` 是给 AI 助手看的工作手册，包含：
 
 - 判断一个源值不值得下的标准
+- **实测素材源总表（含全部下载地址与授权）**
 - 四条已验证的下载通道（DuckDuckGo HTML 端点、GitHub API、itch.io 免登录流程、官方样例库直链）
 - 非人形 / 怪兽 / 虫类的关键词表
 - 入库六步、命名规范、状态口径
